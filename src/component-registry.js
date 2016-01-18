@@ -36,13 +36,19 @@ export class ComponentRegistry {
       createdCallback: {
         value: function() {
           let instruction = BehaviorInstruction.element(this, behavior);
+          let attributes = this.attributes;
+
+          for (let i = 0, ii = attributes.length; i < ii; ++i) {
+            attr = attributes[i];
+            instruction.attributes[attr.name] = attr.value;
+          }
+
           behavior.compile(compiler, viewResources, this, instruction, this.parentNode);
-          //TODO: read initial attr values into the instruction.attributes
 
           let childContainer = container.createChild();
           //TODO: set up container with local entities
-          let controller = behavior.create(childContainer, instruction, this)
 
+          let controller = behavior.create(childContainer, instruction, this)
           controller.created(null);
         }
       },
@@ -60,7 +66,10 @@ export class ComponentRegistry {
       },
       attributeChangedCallback: {
         value: function(attrName, oldValue, newValue) {
-          //lookup bindable by attr name and send value through
+          let bindable = behavior.attributes[attrName];
+          if (bindable) {
+            this.au.controller.viewModel[bindable.name] = newValue;
+          }
         }
       }
     });
