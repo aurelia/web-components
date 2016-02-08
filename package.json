@@ -12,17 +12,21 @@
   },
   "license": "MIT",
   "author": "Rob Eisenberg <rob@bluespire.com> (http://robeisenberg.com/)",
-  "main": "dist/commonjs/web-components.js",
+  "main": "dist/commonjs/aurelia-web-components.js",
   "repository": {
     "type": "git",
     "url": "http://github.com/aurelia/web-components"
   },
-  "jspmNodeConversion": false,
   "jspm": {
-    "main": "web-components",
+    "registry": "npm",
+    "jspmPackage": true,
+    "main": "aurelia-web-components",
     "format": "amd",
     "directories": {
-      "lib": "dist/amd"
+      "dist": "dist/amd"
+    },
+    "peerDependencies": {
+
     },
     "dependencies": {
 
