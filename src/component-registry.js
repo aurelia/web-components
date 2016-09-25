@@ -22,94 +22,93 @@ export class ComponentRegistry {
   }
 
   registerBehavior(behavior, tagName?:string) {
-    let proto = this._createWebComponentPrototypeFromBehavior(behavior);
-    tagName = this._determineTagName(behavior, tagName);
+    let classDefinition = this._createWebComponentClassFromBehavior(behavior);
+    tagName = tagName || this._determineTagNameFromBehavior(behavior);
+
     this._lookup[tagName] = {
       tagName: tagName,
       behavior: behavior,
-      proto: proto
+      classDefinition: classDefinition
     };
 
-    document.register(tagName, { prototype: proto });
+    customElements.define(tagName, classDefinition);
   }
 
-  _determineTagName(behavior, tagName) {
-    return tagName || behavior.elementName
+  _determineTagNameFromBehavior(behavior) {
+    return behavior.elementName;
   }
 
-  _createWebComponentPrototypeFromBehavior(behavior) {
+  _createWebComponentClassFromBehavior(behavior) {
     let viewResources = this.viewResources;
     let compiler = this.viewCompiler;
     let container = this.container;
 
-    let proto = Object.create(HTMLElement.prototype, {
-      createdCallback: {
-        value: function() {
-          let behaviorInstruction = BehaviorInstruction.element(this, behavior);
-          let attributes = this.attributes;
-          let children = this._children = [];
-          let bindings = this._bindings = [];
+    let CustomElement = class extends HTMLElement {
+      constructor() {
+        let behaviorInstruction = BehaviorInstruction.element(this, behavior);
+        let attributes = this.attributes;
+        let children = this._children = [];
+        let bindings = this._bindings = [];
 
-          //TODO: processAttributes
+        //TODO: processAttributes
 
-          for (let i = 0, ii = attributes.length; i < ii; ++i) {
-            attr = attributes[i];
-            behaviorInstruction.attributes[attr.name] = attr.value;
-          }
-
-          behavior.compile(compiler, viewResources, this, behaviorInstruction, this.parentNode);
-
-          let targetInstruction = TargetInstruction.normal(
-            0,
-            0,
-            [behavior.target],
-            [behaviorInstruction],
-            emptyArray,
-            behaviorInstruction
-          );
-
-          let childContainer = createElementContainer(
-            container,
-            this,
-            targetInstruction,
-            behaviorInstruction.partReplacements,
-            children,
-            viewResources
-          );
-
-          let controller = behavior.create(childContainer, behaviorInstruction, this, bindings);
-          controller.created(null);
+        for (let i = 0, ii = attributes.length; i < ii; ++i) {
+          attr = attributes[i];
+          behaviorInstruction.attributes[attr.name] = attr.value;
         }
-      },
-      attachedCallback: {
-        value: function() {
-          this.au.controller.bind();
-          this._bindings.forEach(x => x.bind());
-          this._children.forEach(x => x.bind());
 
-          this.au.controller.attached();
-          this._children.forEach(x => x.attached());
-        }
-      },
-      detachedCallback: {
-        value: function() {
-          this.au.controller.detached();
-          this._children.forEach(x => x.detached());
+        behavior.compile(compiler, viewResources, this, behaviorInstruction, this.parentNode);
 
-          this.au.controller.unbind();
-          this._bindings.forEach(x => x.unbind());
-          this._children.forEach(x => x.unbind());
-        }
-      },
-      attributeChangedCallback: {
-        value: function(attrName, oldValue, newValue) {
-          let bindable = behavior.attributes[attrName];
-          if (bindable) {
-            this.au.controller.viewModel[bindable.name] = newValue;
-          }
+        let targetInstruction = TargetInstruction.normal(
+          0,
+          0,
+          [behavior.target],
+          [behaviorInstruction],
+          emptyArray,
+          behaviorInstruction
+        );
+
+        let childContainer = createElementContainer(
+          container,
+          this,
+          targetInstruction,
+          behaviorInstruction.partReplacements,
+          children,
+          viewResources
+        );
+
+        let controller = behavior.create(childContainer, behaviorInstruction, this, bindings);
+        controller.created(null);
+      }
+
+      connectedCallback() {
+        this.au.controller.bind();
+        this._bindings.forEach(x => x.bind());
+        this._children.forEach(x => x.bind());
+
+        this.au.controller.attached();
+        this._children.forEach(x => x.attached());
+      }
+
+      disconnectedCallback() {
+        this.au.controller.detached();
+        this._children.forEach(x => x.detached());
+
+        this.au.controller.unbind();
+        this._bindings.forEach(x => x.unbind());
+        this._children.forEach(x => x.unbind());
+      }
+
+      attributeChangedCallback(attrName, oldValue, newValue) {
+        let bindable = behavior.attributes[attrName];
+        if (bindable) {
+          this.au.controller.viewModel[bindable.name] = newValue;
         }
       }
-    });
+    }
+
+    let proto = CustomElement.prototype;
+    let observedAttributes = [];
 
     behavior.properties.forEach(prop => {
       let descriptor = {
@@ -125,7 +124,14 @@ export class ComponentRegistry {
         return getObserver(behavior, obj.au.controller.viewModel, prop.name);
       };
 
+      observedAttributes.push(prop.attribute);
       Object.defineProperty(proto, prop.name, descriptor);
+    });
+
+    Object.defineProperty(CustomElement, 'observedAttributes', {
+      get: function() {
+        return observedAttributes;
+      }
     });
 
     Object.keys(behavior.target.prototype).forEach(key => {
@@ -138,7 +144,7 @@ export class ComponentRegistry {
       }
     });
 
-    return proto;
+    return CustomElement;
   }
 }
 
