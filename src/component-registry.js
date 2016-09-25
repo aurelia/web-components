@@ -50,7 +50,7 @@ export class ComponentRegistry {
         let children = this._children = [];
         let bindings = this._bindings = [];
 
-        //TODO: processAttributes
+        type.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
 
         for (let i = 0, ii = attributes.length; i < ii; ++i) {
           attr = attributes[i];
