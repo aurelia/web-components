@@ -18,6 +18,8 @@
     "url": "http://github.com/aurelia/web-components"
   },
   "dependencies": {
-
+    "aurelia-dependency-injection": "^1.3.2",
+    "aurelia-pal": "^1.7.0",
+    "aurelia-templating": "^1.7.0"
   }
 }

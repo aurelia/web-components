@@ -25,11 +25,23 @@
     "directories": {
       "dist": "dist/amd"
     },
-    "peerDependencies": {},
-    "dependencies": {},
+    "peerDependencies": {
+      "aurelia-dependency-injection": "^1.3.2",
+      "aurelia-pal": "^1.7.0",
+      "aurelia-templating": "^1.7.0"
+    },
+    "dependencies": {
+      "aurelia-dependency-injection": "^1.3.2",
+      "aurelia-pal": "^1.7.0",
+      "aurelia-templating": "^1.7.0"
+    },
     "devDependencies": {}
   },
-  "dependencies": {},
+  "dependencies": {
+    "aurelia-dependency-injection": "^1.3.2",
+    "aurelia-pal": "^1.7.0",
+    "aurelia-templating": "^1.7.0"
+  },
   "devDependencies": {
     "aurelia-tools": "^0.1.12",
     "babel-dts-generator": "^0.4.7",
