@@ -114,7 +114,7 @@ export class ComponentRegistry {
           this.au.controller.viewModel[bindable.name] = newValue;
         }
       }
-    }
+    };
 
     let proto = CustomElement.prototype;
     let observedAttributes = [];
@@ -146,7 +146,7 @@ export class ComponentRegistry {
     Object.keys(behavior.target.prototype).forEach(key => {
       let value = behavior.target.prototype[key];
 
-      if(typeof value === 'function') {
+      if (typeof value === 'function') {
         proto[key] = function(...args) {
           return this.au.controller.viewModel[key](...args);
         };
