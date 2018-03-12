@@ -54,6 +54,8 @@ export class ComponentRegistry {
 
     let CustomElement = class extends HTMLElement {
       constructor() {
+        super();
+        
         let behaviorInstruction = BehaviorInstruction.element(this, behavior);
         let attributes = this.attributes;
         let children = this._children = [];
