@@ -35,6 +35,8 @@ export function configure(aurelia) {
  }
 ```
 
+> Note: This plugin requires that your browser have native support for the CustomElements v1 spec or that you have configured a v1 spec-compliant polyfill prior to calling registry methods.
+
 ## Building The Code
 
 To build the code, follow these steps.
