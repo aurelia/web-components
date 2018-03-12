@@ -1,27 +1,22 @@
-import {inject, Container} from 'aurelia-dependency-injection';
-import {DOM} from 'aurelia-pal';
-import {
-  ViewCompiler,
-  ViewResources,
-  BehaviorInstruction,
-  TargetInstruction,
-  BoundViewFactory,
-  ViewSlot
-} from 'aurelia-templating';
+var _dec, _class;
+
+import { inject, Container } from 'aurelia-dependency-injection';
+import { DOM } from 'aurelia-pal';
+import { ViewCompiler, ViewResources, BehaviorInstruction, TargetInstruction, BoundViewFactory, ViewSlot } from 'aurelia-templating';
 
 let emptyArray = Object.freeze([]);
 
-@inject(Container, ViewCompiler, ViewResources)
-export class ComponentRegistry {
-  _lookup = {};
+export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResources), _dec(_class = class ComponentRegistry {
 
   constructor(container, viewCompiler, viewResources) {
+    this._lookup = {};
+
     this.container = container;
     this.viewCompiler = viewCompiler;
     this.viewResources = viewResources;
   }
 
-  registerAllGlobalElements(): Function[] {
+  registerAllGlobalElements() {
     let elements = this.viewResources.elements;
 
     return Object.keys(elements).map(tagName => {
@@ -30,7 +25,7 @@ export class ComponentRegistry {
     });
   }
 
-  registerBehavior(behavior, tagName?:string): Function {
+  registerBehavior(behavior, tagName) {
     let classDefinition = this._createWebComponentClassFromBehavior(behavior);
     tagName = tagName || this._determineTagNameFromBehavior(behavior);
 
@@ -72,23 +67,9 @@ export class ComponentRegistry {
 
         behavior.compile(compiler, viewResources, this, behaviorInstruction, this.parentNode);
 
-        let targetInstruction = TargetInstruction.normal(
-          0,
-          0,
-          [behavior.target],
-          [behaviorInstruction],
-          emptyArray,
-          behaviorInstruction
-        );
+        let targetInstruction = TargetInstruction.normal(0, 0, [behavior.target], [behaviorInstruction], emptyArray, behaviorInstruction);
 
-        let childContainer = createElementContainer(
-          container,
-          this,
-          targetInstruction,
-          behaviorInstruction.partReplacements,
-          children,
-          viewResources
-        );
+        let childContainer = createElementContainer(container, this, targetInstruction, behaviorInstruction.partReplacements, children, viewResources);
 
         let controller = behavior.create(childContainer, behaviorInstruction, this, bindings);
         controller.created(null);
@@ -125,15 +106,15 @@ export class ComponentRegistry {
 
     behavior.properties.forEach(prop => {
       let descriptor = {
-        get: function() {
+        get: function () {
           return this.au.controller.viewModel[prop.name];
         },
-        set: function(value) {
+        set: function (value) {
           this.au.controller.viewModel[prop.name] = value;
         }
       };
 
-      descriptor.get.getObserver = function(obj) {
+      descriptor.get.getObserver = function (obj) {
         return getObserver(behavior, obj.au.controller.viewModel, prop.name);
       };
 
@@ -142,7 +123,7 @@ export class ComponentRegistry {
     });
 
     Object.defineProperty(CustomElement, 'observedAttributes', {
-      get: function() {
+      get: function () {
         return observedAttributes;
       }
     });
@@ -151,7 +132,7 @@ export class ComponentRegistry {
       let value = behavior.target.prototype[key];
 
       if (typeof value === 'function') {
-        proto[key] = function(...args) {
+        proto[key] = function (...args) {
           return this.au.controller.viewModel[key](...args);
         };
       }
@@ -159,7 +140,7 @@ export class ComponentRegistry {
 
     return CustomElement;
   }
-}
+}) || _class);
 
 function getObserver(behavior, instance, name) {
   let lookup = instance.__observers__;

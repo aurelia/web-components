@@ -1,13 +1,6 @@
-import {inject, Container} from 'aurelia-dependency-injection';
+import {inject,Container} from 'aurelia-dependency-injection';
 import {DOM} from 'aurelia-pal';
-import {
-  ViewCompiler,
-  ViewResources,
-  BehaviorInstruction,
-  TargetInstruction,
-  BoundViewFactory,
-  ViewSlot
-} from 'aurelia-templating';
+import {ViewCompiler,ViewResources,BehaviorInstruction,TargetInstruction,BoundViewFactory,ViewSlot} from 'aurelia-templating';
 
 let emptyArray = Object.freeze([]);
 
