@@ -21,6 +21,15 @@ export class ComponentRegistry {
     this.viewResources = viewResources;
   }
 
+  registerAllGlobalElements() {
+    let elements = this.viewResources.elements;
+
+    Object.keys(elements).forEach(tagName => {
+      let behavior = elements[tagName];
+      this.registerBehavior(behavior, tagName);
+    });
+  }
+
   registerBehavior(behavior, tagName?:string) {
     let classDefinition = this._createWebComponentClassFromBehavior(behavior);
     tagName = tagName || this._determineTagNameFromBehavior(behavior);

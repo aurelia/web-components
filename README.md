@@ -12,6 +12,29 @@ This library is part of the [Aurelia](http://www.aurelia.io/) platform and conta
 
 This library can be used in the **browser**.
 
+## Usage
+
+Here's an example configuration for main.js to show how to convert all global custom elements into web components:
+
+```JavaScript
+import {ComponentRegistry} from 'aurelia-web-components';
+
+export function configure(aurelia) {
+   aurelia.use
+     .standardConfiguration()
+     .developmentLogging()
+     .globalResources('resources/my-component');
+
+   aurelia.start().then(() => {
+     let registry = aurelia.container.get(ComponentRegistry);
+
+     //The following line takes all global resource custom elements and registers them as web components.
+     //Once the element is registered, in-page elements will begin rendering.
+     registry.registerAllGlobalElements();
+   });
+ }
+```
+
 ## Building The Code
 
 To build the code, follow these steps.
