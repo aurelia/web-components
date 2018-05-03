@@ -14,6 +14,7 @@ exports.base = function() {
     code:true,
     presets: [ 'es2015-loose', 'stage-1'],
     plugins: [
+      "transform-custom-element-classes",
       'syntax-flow',
       'transform-decorators-legacy',
       ['babel-dts-generator', {

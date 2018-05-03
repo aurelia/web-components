@@ -1,4 +1,4 @@
-import {inject, Container} from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-dependency-injection';
 import {DOM} from 'aurelia-pal';
 import {
   ViewCompiler,
@@ -11,9 +11,11 @@ import {
 
 let emptyArray = Object.freeze([]);
 
-@inject(Container, ViewCompiler, ViewResources)
 export class ComponentRegistry {
+  static inject = [Container, ViewCompiler, ViewResources];
+
   _lookup = {};
+  fallbackPrefix = 'au-';
 
   constructor(container, viewCompiler, viewResources) {
     this.container = container;
@@ -40,6 +42,10 @@ export class ComponentRegistry {
       classDefinition: classDefinition
     };
 
+    if (tagName.indexOf('-') === -1) {
+      tagName = this.fallbackPrefix + tagName;
+    }
+
     customElements.define(tagName, classDefinition);
 
     return classDefinition;
@@ -63,7 +69,7 @@ export class ComponentRegistry {
         let children = this._children = [];
         let bindings = this._bindings = [];
 
-        type.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
+        behavior.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
 
         for (let i = 0, ii = attributes.length; i < ii; ++i) {
           attr = attributes[i];
@@ -95,9 +101,10 @@ export class ComponentRegistry {
       }
 
       connectedCallback() {
-        this.au.controller.bind();
-        this._bindings.forEach(x => x.bind());
-        this._children.forEach(x => x.bind());
+        let scope = { bindingContext: this, overrideContext: {} };
+        this.au.controller.bind(scope);
+        this._bindings.forEach(x => x.bind(scope));
+        this._children.forEach(x => x.bind(scope.bindingContext, scope.overrideContext, true));
 
         this.au.controller.attached();
         this._children.forEach(x => x.attached());
@@ -148,12 +155,16 @@ export class ComponentRegistry {
     });
 
     Object.keys(behavior.target.prototype).forEach(key => {
-      let value = behavior.target.prototype[key];
+      try {
+        let value = behavior.target.prototype[key];
 
-      if (typeof value === 'function') {
-        proto[key] = function(...args) {
-          return this.au.controller.viewModel[key](...args);
-        };
+        if (typeof value === 'function') {
+          proto[key] = function(...args) {
+            return this.au.controller.viewModel[key](...args);
+          };
+        }
+      } catch (e) {
+        //Do nothing since this is likely thrown by the getter and the value isn't a function.
       }
     });
 
