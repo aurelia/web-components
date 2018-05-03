@@ -1,15 +1,23 @@
-var _dec, _class;
+var _class, _temp;
 
-import { inject, Container } from 'aurelia-dependency-injection';
+function _CustomElement() {
+  return Reflect.construct(HTMLElement, [], this.__proto__.constructor);
+}
+
+;
+Object.setPrototypeOf(_CustomElement.prototype, HTMLElement.prototype);
+Object.setPrototypeOf(_CustomElement, HTMLElement);
+import { Container } from 'aurelia-dependency-injection';
 import { DOM } from 'aurelia-pal';
 import { ViewCompiler, ViewResources, BehaviorInstruction, TargetInstruction, BoundViewFactory, ViewSlot } from 'aurelia-templating';
 
 let emptyArray = Object.freeze([]);
 
-export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResources), _dec(_class = class ComponentRegistry {
+export let ComponentRegistry = (_temp = _class = class ComponentRegistry {
 
   constructor(container, viewCompiler, viewResources) {
     this._lookup = {};
+    this.fallbackPrefix = 'au-';
 
     this.container = container;
     this.viewCompiler = viewCompiler;
@@ -35,6 +43,10 @@ export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResou
       classDefinition: classDefinition
     };
 
+    if (tagName.indexOf('-') === -1) {
+      tagName = this.fallbackPrefix + tagName;
+    }
+
     customElements.define(tagName, classDefinition);
 
     return classDefinition;
@@ -49,7 +61,7 @@ export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResou
     let compiler = this.viewCompiler;
     let container = this.container;
 
-    let CustomElement = class extends HTMLElement {
+    let CustomElement = class extends _CustomElement {
       constructor() {
         super();
 
@@ -58,7 +70,7 @@ export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResou
         let children = this._children = [];
         let bindings = this._bindings = [];
 
-        type.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
+        behavior.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
 
         for (let i = 0, ii = attributes.length; i < ii; ++i) {
           attr = attributes[i];
@@ -76,9 +88,10 @@ export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResou
       }
 
       connectedCallback() {
-        this.au.controller.bind();
-        this._bindings.forEach(x => x.bind());
-        this._children.forEach(x => x.bind());
+        let scope = { bindingContext: this, overrideContext: {} };
+        this.au.controller.bind(scope);
+        this._bindings.forEach(x => x.bind(scope));
+        this._children.forEach(x => x.bind(scope.bindingContext, scope.overrideContext, true));
 
         this.au.controller.attached();
         this._children.forEach(x => x.attached());
@@ -129,18 +142,20 @@ export let ComponentRegistry = (_dec = inject(Container, ViewCompiler, ViewResou
     });
 
     Object.keys(behavior.target.prototype).forEach(key => {
-      let value = behavior.target.prototype[key];
+      try {
+        let value = behavior.target.prototype[key];
 
-      if (typeof value === 'function') {
-        proto[key] = function (...args) {
-          return this.au.controller.viewModel[key](...args);
-        };
-      }
+        if (typeof value === 'function') {
+          proto[key] = function (...args) {
+            return this.au.controller.viewModel[key](...args);
+          };
+        }
+      } catch (e) {}
     });
 
     return CustomElement;
   }
-}) || _class);
+}, _class.inject = [Container, ViewCompiler, ViewResources], _temp);
 
 function getObserver(behavior, instance, name) {
   let lookup = instance.__observers__;

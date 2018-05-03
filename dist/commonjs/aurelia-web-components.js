@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ComponentRegistry = undefined;
 
-var _dec, _class;
+var _class, _temp;
 
 var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
@@ -17,15 +17,24 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function _CustomElement() {
+  return Reflect.construct(HTMLElement, [], this.__proto__.constructor);
+}
+
+;
+Object.setPrototypeOf(_CustomElement.prototype, HTMLElement.prototype);
+Object.setPrototypeOf(_CustomElement, HTMLElement);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var emptyArray = Object.freeze([]);
 
-var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependencyInjection.inject)(_aureliaDependencyInjection.Container, _aureliaTemplating.ViewCompiler, _aureliaTemplating.ViewResources), _dec(_class = function () {
+var ComponentRegistry = exports.ComponentRegistry = (_temp = _class = function () {
   function ComponentRegistry(container, viewCompiler, viewResources) {
     _classCallCheck(this, ComponentRegistry);
 
     this._lookup = {};
+    this.fallbackPrefix = 'au-';
 
     this.container = container;
     this.viewCompiler = viewCompiler;
@@ -53,6 +62,10 @@ var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependen
       classDefinition: classDefinition
     };
 
+    if (tagName.indexOf('-') === -1) {
+      tagName = this.fallbackPrefix + tagName;
+    }
+
     customElements.define(tagName, classDefinition);
 
     return classDefinition;
@@ -67,20 +80,20 @@ var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependen
     var compiler = this.viewCompiler;
     var container = this.container;
 
-    var CustomElement = function (_HTMLElement) {
-      _inherits(CustomElement, _HTMLElement);
+    var CustomElement = function (_CustomElement2) {
+      _inherits(CustomElement, _CustomElement2);
 
       function CustomElement() {
         _classCallCheck(this, CustomElement);
 
-        var _this2 = _possibleConstructorReturn(this, _HTMLElement.call(this));
+        var _this2 = _possibleConstructorReturn(this, _CustomElement2.call(this));
 
         var behaviorInstruction = _aureliaTemplating.BehaviorInstruction.element(_this2, behavior);
         var attributes = _this2.attributes;
         var children = _this2._children = [];
         var bindings = _this2._bindings = [];
 
-        type.processAttributes(compiler, viewResources, _this2, attributes, behaviorInstruction);
+        behavior.processAttributes(compiler, viewResources, _this2, attributes, behaviorInstruction);
 
         for (var i = 0, ii = attributes.length; i < ii; ++i) {
           attr = attributes[i];
@@ -99,12 +112,13 @@ var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependen
       }
 
       CustomElement.prototype.connectedCallback = function connectedCallback() {
-        this.au.controller.bind();
+        var scope = { bindingContext: this, overrideContext: {} };
+        this.au.controller.bind(scope);
         this._bindings.forEach(function (x) {
-          return x.bind();
+          return x.bind(scope);
         });
         this._children.forEach(function (x) {
-          return x.bind();
+          return x.bind(scope.bindingContext, scope.overrideContext, true);
         });
 
         this.au.controller.attached();
@@ -136,7 +150,7 @@ var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependen
       };
 
       return CustomElement;
-    }(HTMLElement);
+    }(_CustomElement);
 
     var proto = CustomElement.prototype;
     var observedAttributes = [];
@@ -166,22 +180,24 @@ var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependen
     });
 
     Object.keys(behavior.target.prototype).forEach(function (key) {
-      var value = behavior.target.prototype[key];
+      try {
+        var value = behavior.target.prototype[key];
 
-      if (typeof value === 'function') {
-        proto[key] = function () {
-          var _au$controller$viewMo;
+        if (typeof value === 'function') {
+          proto[key] = function () {
+            var _au$controller$viewMo;
 
-          return (_au$controller$viewMo = this.au.controller.viewModel)[key].apply(_au$controller$viewMo, arguments);
-        };
-      }
+            return (_au$controller$viewMo = this.au.controller.viewModel)[key].apply(_au$controller$viewMo, arguments);
+          };
+        }
+      } catch (e) {}
     });
 
     return CustomElement;
   };
 
   return ComponentRegistry;
-}()) || _class);
+}(), _class.inject = [_aureliaDependencyInjection.Container, _aureliaTemplating.ViewCompiler, _aureliaTemplating.ViewResources], _temp);
 
 
 function getObserver(behavior, instance, name) {

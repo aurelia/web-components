@@ -30,21 +30,30 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templ
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
+  function _CustomElement() {
+    return Reflect.construct(HTMLElement, [], this.__proto__.constructor);
+  }
+
+  ;
+  Object.setPrototypeOf(_CustomElement.prototype, HTMLElement.prototype);
+  Object.setPrototypeOf(_CustomElement, HTMLElement);
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   }
 
-  var _dec, _class;
+  var _class, _temp;
 
   var emptyArray = Object.freeze([]);
 
-  var ComponentRegistry = exports.ComponentRegistry = (_dec = (0, _aureliaDependencyInjection.inject)(_aureliaDependencyInjection.Container, _aureliaTemplating.ViewCompiler, _aureliaTemplating.ViewResources), _dec(_class = function () {
+  var ComponentRegistry = exports.ComponentRegistry = (_temp = _class = function () {
     function ComponentRegistry(container, viewCompiler, viewResources) {
       _classCallCheck(this, ComponentRegistry);
 
       this._lookup = {};
+      this.fallbackPrefix = 'au-';
 
       this.container = container;
       this.viewCompiler = viewCompiler;
@@ -72,6 +81,10 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templ
         classDefinition: classDefinition
       };
 
+      if (tagName.indexOf('-') === -1) {
+        tagName = this.fallbackPrefix + tagName;
+      }
+
       customElements.define(tagName, classDefinition);
 
       return classDefinition;
@@ -86,20 +99,20 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templ
       var compiler = this.viewCompiler;
       var container = this.container;
 
-      var CustomElement = function (_HTMLElement) {
-        _inherits(CustomElement, _HTMLElement);
+      var CustomElement = function (_CustomElement2) {
+        _inherits(CustomElement, _CustomElement2);
 
         function CustomElement() {
           _classCallCheck(this, CustomElement);
 
-          var _this2 = _possibleConstructorReturn(this, _HTMLElement.call(this));
+          var _this2 = _possibleConstructorReturn(this, _CustomElement2.call(this));
 
           var behaviorInstruction = _aureliaTemplating.BehaviorInstruction.element(_this2, behavior);
           var attributes = _this2.attributes;
           var children = _this2._children = [];
           var bindings = _this2._bindings = [];
 
-          type.processAttributes(compiler, viewResources, _this2, attributes, behaviorInstruction);
+          behavior.processAttributes(compiler, viewResources, _this2, attributes, behaviorInstruction);
 
           for (var i = 0, ii = attributes.length; i < ii; ++i) {
             attr = attributes[i];
@@ -118,12 +131,13 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templ
         }
 
         CustomElement.prototype.connectedCallback = function connectedCallback() {
-          this.au.controller.bind();
+          var scope = { bindingContext: this, overrideContext: {} };
+          this.au.controller.bind(scope);
           this._bindings.forEach(function (x) {
-            return x.bind();
+            return x.bind(scope);
           });
           this._children.forEach(function (x) {
-            return x.bind();
+            return x.bind(scope.bindingContext, scope.overrideContext, true);
           });
 
           this.au.controller.attached();
@@ -155,7 +169,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templ
         };
 
         return CustomElement;
-      }(HTMLElement);
+      }(_CustomElement);
 
       var proto = CustomElement.prototype;
       var observedAttributes = [];
@@ -185,22 +199,24 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templ
       });
 
       Object.keys(behavior.target.prototype).forEach(function (key) {
-        var value = behavior.target.prototype[key];
+        try {
+          var value = behavior.target.prototype[key];
 
-        if (typeof value === 'function') {
-          proto[key] = function () {
-            var _au$controller$viewMo;
+          if (typeof value === 'function') {
+            proto[key] = function () {
+              var _au$controller$viewMo;
 
-            return (_au$controller$viewMo = this.au.controller.viewModel)[key].apply(_au$controller$viewMo, arguments);
-          };
-        }
+              return (_au$controller$viewMo = this.au.controller.viewModel)[key].apply(_au$controller$viewMo, arguments);
+            };
+          }
+        } catch (e) {}
       });
 
       return CustomElement;
     };
 
     return ComponentRegistry;
-  }()) || _class);
+  }(), _class.inject = [_aureliaDependencyInjection.Container, _aureliaTemplating.ViewCompiler, _aureliaTemplating.ViewResources], _temp);
 
 
   function getObserver(behavior, instance, name) {

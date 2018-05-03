@@ -1,6 +1,5 @@
 declare module 'aurelia-web-components' {
   import {
-    inject,
     Container
   } from 'aurelia-dependency-injection';
   import {
@@ -15,7 +14,9 @@ declare module 'aurelia-web-components' {
     ViewSlot
   } from 'aurelia-templating';
   export class ComponentRegistry {
+    static inject: any;
     _lookup: any;
+    fallbackPrefix: any;
     constructor(container: any, viewCompiler: any, viewResources: any);
     registerAllGlobalElements(): Function[];
     registerBehavior(behavior: any, tagName?: string): Function;
