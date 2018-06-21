@@ -199,7 +199,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-pal', 'aurelia-templat
               behavior.processAttributes(compiler, viewResources, _this2, attributes, behaviorInstruction);
 
               for (var i = 0, ii = attributes.length; i < ii; ++i) {
-                attr = attributes[i];
+                var attr = attributes[i];
                 behaviorInstruction.attributes[attr.name] = attr.value;
               }
 

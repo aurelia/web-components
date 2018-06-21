@@ -96,7 +96,7 @@ var ComponentRegistry = exports.ComponentRegistry = (_temp = _class = function (
         behavior.processAttributes(compiler, viewResources, _this2, attributes, behaviorInstruction);
 
         for (var i = 0, ii = attributes.length; i < ii; ++i) {
-          attr = attributes[i];
+          var attr = attributes[i];
           behaviorInstruction.attributes[attr.name] = attr.value;
         }
 

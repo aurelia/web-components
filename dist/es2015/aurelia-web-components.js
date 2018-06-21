@@ -73,7 +73,7 @@ export let ComponentRegistry = (_temp = _class = class ComponentRegistry {
         behavior.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
 
         for (let i = 0, ii = attributes.length; i < ii; ++i) {
-          attr = attributes[i];
+          let attr = attributes[i];
           behaviorInstruction.attributes[attr.name] = attr.value;
         }
 
