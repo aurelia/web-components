@@ -24,17 +24,20 @@ export function configure(aurelia) {
      .developmentLogging()
      .globalResources('resources/my-component');
 
-	 aurelia
-	 	.start()
-	 	.then(() => {
-			const registry = aurelia.container.get(CustomElementRegistry);
+   aurelia
+     .start()
+     .then(() => {
+      const registry = aurelia.container.get(CustomElementRegistry);
 
-			//The following line takes all global resource custom elements and registers them as web components.
-			//Once the element is registered, in-page elements will begin rendering.
-			registry.useGlobalElements();
-		});
+      //The following line takes all global resource custom elements and registers them as web components.
+      //Once the element is registered, in-page elements will begin rendering.
+      registry.useGlobalElements();
+    });
  }
 ```
+
+> Warning: Note that calling `.useGlobalElements()` will remove all global elements from your global resources, including `<router-view>` and `<compose>`.
+
 
 Alternatively, custom elements can also be registered on the fly:
 
@@ -48,61 +51,61 @@ export function configure(aurelia) {
      .developmentLogging()
      .globalResources('resources/my-component');
 
-	 aurelia
-	 	.start()
-	 	.then(() => {
-			const registry = aurelia.container.get(CustomElementRegistry);
+   aurelia
+     .start()
+     .then(() => {
+      const registry = aurelia.container.get(CustomElementRegistry);
 
-			// the following register 
-			return registry.register(class MyButton {
+      // the following register 
+      return registry.register(class MyButton {
 
-				static $view = `<template>
-					<button>\${icon}<slot></slot></button>
-				</template>`
+        static $view = `<template>
+          <button>\${icon}<slot></slot></button>
+        </template>`
 
-				@bindable icon
-			});
-		 })
-		 // or
-		 .then(() => {
-			const registry = aurelia.container.get(CustomElementRegistry);
+        @bindable icon
+      });
+     })
+     // or
+     .then(() => {
+      const registry = aurelia.container.get(CustomElementRegistry);
 
-			// with useView path strategy
-			@useView('path/to/view.html')
-			class MyCarousel {
-				// ...
-			}
+      // with useView path strategy
+      @useView('path/to/view.html')
+      class MyCarousel {
+        // ...
+      }
 
-			// the following register 
-			return Promise.all([
-				// with static view strategy
-				registry.register(class MyButton {
+      // the following register 
+      return Promise.all([
+        // with static view strategy
+        registry.register(class MyButton {
 
-					static $view = `<template>
-						<button>\${icon}<slot></slot></button>
-					</template>`
+          static $view = `<template>
+            <button>\${icon}<slot></slot></button>
+          </template>`
 
-					// ...
-				}),
-				// with inline view strategy, via getViewStrategy
-				registry.register(class MyPanel {
-					// ...
-					getViewStrategy() {
-						return new InlineViewStrategy(
-							`<template>
-								<h1>\${heading}</h1>
-								<slot></slot>
-							</template>`
-						)
-					}
-				}),
-				// with pre-defined view model class, using @useView
-				registry.register(MyCarousel)
-			]);
-		 })
-		 .then(() => {
-			 aurelia.setRoot('app')
-		 });
+          // ...
+        }),
+        // with inline view strategy, via getViewStrategy
+        registry.register(class MyPanel {
+          // ...
+          getViewStrategy() {
+            return new InlineViewStrategy(
+              `<template>
+                <h1>\${heading}</h1>
+                <slot></slot>
+              </template>`
+            )
+          }
+        }),
+        // with pre-defined view model class, using @useView
+        registry.register(MyCarousel)
+      ]);
+     })
+     .then(() => {
+       aurelia.setRoot('app')
+     });
  }
 ```
 
@@ -115,14 +118,14 @@ To build the code, follow these steps.
 1. Ensure that [NodeJS](http://nodejs.org/) is installed. This provides the platform on which the build tooling runs.
 2. From the project folder, execute the following command:
 
-	```shell
-	npm install
-	```
+  ```shell
+  npm install
+  ```
 3. To build the code, you can now run:
 
-	```shell
-	npm run build
-	```
+  ```shell
+  npm run build
+  ```
 5. You will find the compiled code in the `dist` folder, available in module formats: UMD, AMD, CommonJS and ES6.
 
 ## Running The Tests
@@ -131,9 +134,9 @@ To run the unit tests, first ensure that you have followed the steps above in or
 
 1. You can now run the tests with this command:
 
-	```shell
-	npm test
-	```
+  ```shell
+  npm test
+  ```
 
 
 ## How it works
