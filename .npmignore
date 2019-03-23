@@ -1,3 +1,11 @@
 jspm_packages
 bower_components
 .idea
+.vscode
+bower.json
+CONTRIBUTING.md
+ISSUE_TEMPLATE.md
+karma.conf.js
+package-lock.json
+rollup.config.js
+tslint.json
