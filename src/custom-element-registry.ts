@@ -1,5 +1,5 @@
 import { Container } from 'aurelia-dependency-injection';
-import { HtmlBehaviorResource, ViewCompiler, ViewResources } from 'aurelia-templating';
+import { HtmlBehaviorResource, ViewCompiler, ViewResources, ViewFactory } from 'aurelia-templating';
 import { createWebComponentClassFromBehavior } from './custom-element-utilities';
 import './interface';
 import { ICustomElementInfo, ICustomHtmlRegistry } from './interface';
@@ -15,13 +15,14 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
    */
   fallbackPrefix: string;
 
-  private _lookup: Record<string, ICustomElementInfo> = {};
+  private _lookup: Record<string, ICustomElementInfo>;
   private container: Container;
   private viewCompiler: ViewCompiler;
   private viewResources: ViewResources;
 
   constructor(container: Container, viewCompiler: ViewCompiler, viewResources: ViewResources) {
     this.fallbackPrefix = 'au-';
+    this._lookup = Object.create(null);
     this.container = container;
     this.viewCompiler = viewCompiler;
     this.viewResources = viewResources;
@@ -39,12 +40,12 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
 
     return Object.keys(elements).map(tagName => {
       const behavior = elements[tagName];
-      return this.registerBehavior(behavior, tagName);
+      return this.registerBehavior(behavior, tagName).classDefinition;
     });
   }
 
   /**@internal */
-  registerBehavior(behavior: HtmlBehaviorResource, tagName?: string): Function {
+  registerBehavior(behavior: HtmlBehaviorResource, tagName?: string): ICustomElementInfo {
     const classDefinition = createWebComponentClassFromBehavior(
       this.container,
       behavior,
@@ -53,7 +54,7 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
     );
     tagName = tagName || tagNameOf(behavior);
 
-    this._lookup[tagName] = {
+    const info: ICustomElementInfo = this._lookup[tagName] = {
       tagName: tagName,
       behavior: behavior,
       classDefinition: classDefinition
@@ -65,10 +66,10 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
 
     customElements.define(tagName, classDefinition);
 
-    return classDefinition;
+    return info;
   }
 
-  register(Type: Function): Function {
+  register(Type: Function): Promise<Function> {
     let htmlBehaviorResource = metadata.get(metadata.resource, Type) as HtmlBehaviorResource;
     // validating metadata
     if (htmlBehaviorResource) {
@@ -76,10 +77,14 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
     } else {
       htmlBehaviorResource = ViewResources.convention(Type) as HtmlBehaviorResource;
     }
-    if (!(htmlBehaviorResource instanceof HtmlBehaviorResource)) {
-      throw new Error(`class ${Type.name} is already associated with different type of resource. Cannot register as custom element.`);
+    if (!(htmlBehaviorResource instanceof HtmlBehaviorResource) || htmlBehaviorResource.elementName === null) {
+      throw new Error(`class ${Type.name} is already associated with a different type of resource. Cannot register as a custom element.`);
     }
-    return this.registerBehavior(htmlBehaviorResource, Type['is']);
+
+    const customElementInfo = this.registerBehavior(htmlBehaviorResource, Type['is']);
+    return htmlBehaviorResource
+      .load(this.container, Type)
+      .then(() => customElementInfo.classDefinition);
   }
 
   has(Type: Function): boolean {

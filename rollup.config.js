@@ -5,10 +5,25 @@ const MODULE_NAME = 'aurelia-web-components';
 export default [
   {
     input: `src/${MODULE_NAME}.ts`,
-    output: {
-      file: `dist/es2015/${MODULE_NAME}.js`,
-      format: 'esm'
-    },
+    output: [
+      {
+        file: `dist/es2015/${MODULE_NAME}.js`,
+        format: 'esm'
+      },
+      {
+        file: `dist/umd-es2015/${MODULE_NAME}.js`,
+        format: 'umd',
+        name: 'au.webComponents',
+        globals: {
+          'aurelia-metadata': 'au',
+          'aurelia-binding': 'au',
+          'aurelia-dependency-injection': 'au',
+          'aurelia-pal': 'au',
+          'aurelia-templating': 'au',
+          'aurelia-templating-resources': 'au',
+        }
+      }
+    ],
     plugins: [
       typescript({
         cacheRoot: '.rollupcache',
@@ -65,6 +80,7 @@ export default [
       format: 'umd',
       name: 'au.webComponents',
       globals: {
+        'aurelia-metadata': 'au',
         'aurelia-binding': 'au',
         'aurelia-dependency-injection': 'au',
         'aurelia-pal': 'au',
@@ -77,6 +93,7 @@ export default [
         cacheRoot: '.rollupcache',
         tsconfigOverride: {
           compilerOptions: {
+            target: 'es5',
             removeComments: true,
           }
         }
@@ -84,7 +101,9 @@ export default [
     ]
   },
 ].map(config => {
+  config.__esModule = false;
   config.external = [
+    'aurelia-metadata',
     'aurelia-binding',
     'aurelia-dependency-injection',
     'aurelia-pal',

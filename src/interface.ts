@@ -90,8 +90,9 @@ export interface ICustomElementViewModelConstructor extends Function {
 export interface ICustomHtmlRegistry {
   /**
    * Register a class as a custom html component: element/attribute
+   * @returns Mapped class of view model class to be used as custom element/custom attribute
    */
-  register(behavior: Function): void;
+  register(behavior: Function): Promise<Function>;
 
   /**
    * Returns `true` if the registry has given behavior registered

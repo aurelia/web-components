@@ -19,7 +19,8 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "cut-release": "npm run build"
   },
   "jspm": {
     "registry": "npm",

@@ -23,8 +23,15 @@ import {
 import {
   DOM
 } from 'aurelia-pal';
-import { IGetterFunction } from './interface';
-import { definePrototypeGetterSetter, defineProperty } from './utilities';
+
+import {
+  IGetterFunction
+} from './interface';
+
+import {
+  definePrototypeGetterSetter,
+  defineProperty
+} from './utilities';
 
 const emptyArray = Object.freeze([]) as any[];
 
@@ -118,7 +125,7 @@ export const createWebComponentClassFromBehavior = (
     } as IGetterFunction;
 
     getterFn.getObserver = function(obj: any) {
-      return getObserver(behavior, obj.au.controller.viewModel, bindableProperty.name);
+      return getObserver(container, behavior, obj.au.controller.viewModel, bindableProperty.name);
     };
 
     definePrototypeGetterSetter(
@@ -152,6 +159,7 @@ export const createWebComponentClassFromBehavior = (
 };
 
 const getObserver = (
+  container: Container,
   behavior: HtmlBehaviorResource,
   instance: object & { __observers__: any; },
   name: string
@@ -160,7 +168,7 @@ const getObserver = (
 
   if (lookup === undefined) {
     if (!behavior.isInitialized) {
-      behavior.initialize(Container.instance || new Container(), instance.constructor);
+      behavior.initialize(container, instance.constructor);
     }
 
     lookup = behavior.observerLocator.getOrCreateObserversLookup(instance);

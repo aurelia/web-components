@@ -8,4 +8,5 @@ ISSUE_TEMPLATE.md
 karma.conf.js
 package-lock.json
 rollup.config.js
+tsconfig.json
 tslint.json
