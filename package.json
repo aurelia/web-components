@@ -20,7 +20,9 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "cut-release": "npm run build"
+    "change-log": "node ./build/change-log.js",
+    "cut-release": "npm run build",
+    "lint": "tslint --project tsconfig.json"
   },
   "jspm": {
     "registry": "npm",
@@ -49,9 +51,11 @@
     "aurelia-templating": "^1.10.1"
   },
   "devDependencies": {
+    "conventional-changelog": "^3.0.6",
     "rimraf": "^2.6.3",
     "rollup": "^1.7.0",
     "rollup-plugin-typescript2": "^0.20.1",
+    "tslint": "^5.14.0",
     "typescript": "^3.3.3333"
   }
 }
