@@ -1,5 +1,9 @@
 jspm_packages
 bower_components
+build
+doc
+src
+.editorconfig
 .idea
 .vscode
 bower.json
