@@ -15,9 +15,16 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
    */
   fallbackPrefix: string;
 
+  /**@internal */
   private _lookup: Record<string, ICustomElementInfo>;
+
+  /**@internal */
   private container: Container;
+
+  /**@internal */
   private viewCompiler: ViewCompiler;
+
+  /**@internal */
   private viewResources: ViewResources;
 
   constructor(container: Container, viewCompiler: ViewCompiler, viewResources: ViewResources) {

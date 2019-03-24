@@ -44,9 +44,12 @@ export const createWebComponentClassFromBehavior = (
 
   const CustomElementClass = class extends HTMLElement {
 
-    private _children: View[];
-    private _bindings: Binding[];
-    private au: { controller: Controller; };
+    /**@internal */
+    _children: View[];
+    /**@internal */
+    _bindings: Binding[];
+    /**@internal */
+    au: { controller: Controller; };
 
     constructor() {
       super();
