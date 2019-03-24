@@ -13,6 +13,9 @@
   "license": "MIT",
   "author": "Rob Eisenberg <rob@bluespire.com> (http://robeisenberg.com/)",
   "main": "dist/commonjs/aurelia-web-components.js",
+  "module": "dist/es2015/aurelia-web-component.js",
+  "unpkg": "dist/umd-es2015/aurelia-web-component.js",
+  "types": "dist/aurelia-web-components.d.ts",
   "repository": {
     "type": "git",
     "url": "http://github.com/aurelia/web-components"
@@ -20,6 +23,8 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
+    "postbuild": "npm run build:dts",
+    "build:dts": "dts-bundle-generator -o dist/aurelia-web-components.d.ts src/aurelia-web-components.ts",
     "change-log": "node ./build/change-log.js",
     "cut-release": "npm run build",
     "lint": "tslint --project tsconfig.json"
@@ -52,6 +57,7 @@
   },
   "devDependencies": {
     "conventional-changelog": "^3.0.6",
+    "dts-bundle-generator": "^2.1.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.7.0",
     "rollup-plugin-typescript2": "^0.20.1",

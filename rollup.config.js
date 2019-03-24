@@ -101,7 +101,6 @@ export default [
     ]
   },
 ].map(config => {
-  config.__esModule = false;
   config.external = [
     'aurelia-metadata',
     'aurelia-binding',
