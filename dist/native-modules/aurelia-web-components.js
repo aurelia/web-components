@@ -1,11 +1,7 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var aureliaDependencyInjection = require('aurelia-dependency-injection');
-var aureliaTemplating = require('aurelia-templating');
-var aureliaPal = require('aurelia-pal');
-var aureliaMetadata = require('aurelia-metadata');
+import { Container } from 'aurelia-dependency-injection';
+import { BehaviorInstruction, TargetInstruction, BoundViewFactory, ViewSlot, ViewResources, HtmlBehaviorResource, ViewCompiler } from 'aurelia-templating';
+import { DOM } from 'aurelia-pal';
+import { metadata } from 'aurelia-metadata';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -58,7 +54,7 @@ var createWebComponentClassFromBehavior = function (container, behavior, viewRes
         __extends(class_1, _super);
         function class_1() {
             var _this = _super.call(this) || this;
-            var behaviorInstruction = aureliaTemplating.BehaviorInstruction.element(_this, behavior);
+            var behaviorInstruction = BehaviorInstruction.element(_this, behavior);
             var attributes = _this.attributes;
             var children = _this._children = [];
             var bindings = _this._bindings = [];
@@ -68,7 +64,7 @@ var createWebComponentClassFromBehavior = function (container, behavior, viewRes
                 behaviorInstruction.attributes[attr.name] = attr.value;
             }
             behavior.compile(compiler, viewResources, _this, behaviorInstruction, _this.parentNode);
-            var targetInstruction = aureliaTemplating.TargetInstruction.normal(0, 0, [behavior.target], [behaviorInstruction], emptyArray, behaviorInstruction);
+            var targetInstruction = TargetInstruction.normal(0, 0, [behavior.target], [behaviorInstruction], emptyArray, behaviorInstruction);
             var childContainer = createElementContainer(container, _this, targetInstruction, children, behaviorInstruction.partReplacements, viewResources);
             var controller = behavior.create(childContainer, behaviorInstruction, _this, bindings);
             controller.created(null);
@@ -129,10 +125,10 @@ var getObserver = function (container, behavior, instance, name) {
     return lookup[name];
 };
 function elementContainerGet(key) {
-    if (key === aureliaPal.DOM.Element) {
+    if (key === DOM.Element) {
         return this.element;
     }
-    if (key === aureliaTemplating.BoundViewFactory) {
+    if (key === BoundViewFactory) {
         if (this.boundViewFactory) {
             return this.boundViewFactory;
         }
@@ -141,21 +137,21 @@ function elementContainerGet(key) {
         if (partReplacements) {
             factory = partReplacements[factory.part] || factory;
         }
-        this.boundViewFactory = new aureliaTemplating.BoundViewFactory(this, factory, partReplacements);
+        this.boundViewFactory = new BoundViewFactory(this, factory, partReplacements);
         return this.boundViewFactory;
     }
-    if (key === aureliaTemplating.ViewSlot) {
+    if (key === ViewSlot) {
         if (this.viewSlot === undefined) {
-            this.viewSlot = new aureliaTemplating.ViewSlot(this.element, this.instruction.anchorIsContainer);
+            this.viewSlot = new ViewSlot(this.element, this.instruction.anchorIsContainer);
             this.element.isContentProjectionSource = this.instruction.lifting;
             this.children.push(this.viewSlot);
         }
         return this.viewSlot;
     }
-    if (key === aureliaTemplating.ViewResources) {
+    if (key === ViewResources) {
         return this.viewResources;
     }
-    if (key === aureliaTemplating.TargetInstruction) {
+    if (key === TargetInstruction) {
         return this.instruction;
     }
     return this.superGet(key);
@@ -207,14 +203,14 @@ var CustomElementRegistry = (function () {
         return info;
     };
     CustomElementRegistry.prototype.register = function (Type) {
-        var htmlBehaviorResource = aureliaMetadata.metadata.get(aureliaMetadata.metadata.resource, Type);
+        var htmlBehaviorResource = metadata.get(metadata.resource, Type);
         if (htmlBehaviorResource) {
-            aureliaTemplating.ViewResources.convention(Type, htmlBehaviorResource);
+            ViewResources.convention(Type, htmlBehaviorResource);
         }
         else {
-            htmlBehaviorResource = aureliaTemplating.ViewResources.convention(Type);
+            htmlBehaviorResource = ViewResources.convention(Type);
         }
-        if (!(htmlBehaviorResource instanceof aureliaTemplating.HtmlBehaviorResource) || htmlBehaviorResource.elementName === null) {
+        if (!(htmlBehaviorResource instanceof HtmlBehaviorResource) || htmlBehaviorResource.elementName === null) {
             throw new Error("class " + Type.name + " is already associated with a different type of resource. Cannot register as a custom element.");
         }
         var customElementInfo = this.registerBehavior(htmlBehaviorResource, Type['is']);
@@ -223,14 +219,14 @@ var CustomElementRegistry = (function () {
             .then(function () { return customElementInfo.classDefinition; });
     };
     CustomElementRegistry.prototype.has = function (Type) {
-        var htmlBehaviorResource = aureliaMetadata.metadata.get(aureliaMetadata.metadata.resource, Type);
-        if (!htmlBehaviorResource || !(htmlBehaviorResource instanceof aureliaTemplating.HtmlBehaviorResource)) {
+        var htmlBehaviorResource = metadata.get(metadata.resource, Type);
+        if (!htmlBehaviorResource || !(htmlBehaviorResource instanceof HtmlBehaviorResource)) {
             return false;
         }
         return this._lookup[tagNameOf(htmlBehaviorResource)] !== undefined;
     };
-    CustomElementRegistry.inject = [aureliaDependencyInjection.Container, aureliaTemplating.ViewCompiler, aureliaTemplating.ViewResources];
+    CustomElementRegistry.inject = [Container, ViewCompiler, ViewResources];
     return CustomElementRegistry;
 }());
 
-exports.CustomElementRegistry = CustomElementRegistry;
+export { CustomElementRegistry };

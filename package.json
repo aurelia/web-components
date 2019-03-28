@@ -1,6 +1,6 @@
 {
   "name": "aurelia-web-components",
-  "version": "0.2.1",
+  "version": "1.0.0-beta.1",
   "description": "A plugin capable of transforming Aurelia components into standards-compliant Web Components.",
   "keywords": [
     "aurelia",
@@ -25,7 +25,7 @@
     "build": "rollup -c",
     "postbuild": "npm run build:dts",
     "build:dts": "dts-bundle-generator -o dist/aurelia-web-components.d.ts src/aurelia-web-components.ts",
-    "change-log": "node ./build/change-log.js",
+    "changelog": "node ./build/change-log.js",
     "cut-release": "npm run build",
     "lint": "tslint --project tsconfig.json"
   },

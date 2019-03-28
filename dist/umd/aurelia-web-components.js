@@ -1,4 +1,8 @@
-define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aurelia-pal', 'aurelia-metadata'], function (exports, aureliaDependencyInjection, aureliaTemplating, aureliaPal, aureliaMetadata) { 'use strict';
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('aurelia-dependency-injection'), require('aurelia-templating'), require('aurelia-pal'), require('aurelia-metadata')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aurelia-pal', 'aurelia-metadata'], factory) :
+    (global = global || self, factory((global.au = global.au || {}, global.au.webComponents = {}), global.au, global.au, global.au, global.au));
+}(this, function (exports, aureliaDependencyInjection, aureliaTemplating, aureliaPal, aureliaMetadata) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -230,4 +234,4 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-});
+}));
