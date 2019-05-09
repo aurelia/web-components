@@ -8,7 +8,8 @@ export default [
     output: [
       {
         file: `dist/es2015/${MODULE_NAME}.js`,
-        format: 'esm'
+        format: 'esm',
+        sourcemap: true
       },
       {
         file: `dist/umd-es2015/${MODULE_NAME}.js`,
@@ -21,7 +22,8 @@ export default [
           'aurelia-pal': 'au',
           'aurelia-templating': 'au',
           'aurelia-templating-resources': 'au',
-        }
+        },
+        sourcemap: true
       }
     ],
     plugins: [
@@ -39,7 +41,8 @@ export default [
     input: `src/${MODULE_NAME}.ts`,
     output: {
       file: `dist/es2017/${MODULE_NAME}.js`,
-      format: 'esm'
+      format: 'esm',
+      sourcemap: true
     },
     plugins: [
       typescript({
@@ -56,10 +59,10 @@ export default [
   {
     input: `src/${MODULE_NAME}.ts`,
     output: [
-      { file: `dist/amd/${MODULE_NAME}.js`, format: 'amd', id: MODULE_NAME },
-      { file: `dist/commonjs/${MODULE_NAME}.js`, format: 'cjs' },
-      { file: `dist/system/${MODULE_NAME}.js`, format: 'system' },
-      { file: `dist/native-modules/${MODULE_NAME}.js`, format: 'esm' },
+      { file: `dist/amd/${MODULE_NAME}.js`, format: 'amd', id: MODULE_NAME, sourcemap: true },
+      { file: `dist/commonjs/${MODULE_NAME}.js`, format: 'cjs', sourcemap: true },
+      { file: `dist/system/${MODULE_NAME}.js`, format: 'system', sourcemap: true },
+      { file: `dist/native-modules/${MODULE_NAME}.js`, format: 'esm', sourcemap: true },
     ],
     plugins: [
       typescript({
@@ -86,7 +89,8 @@ export default [
         'aurelia-pal': 'au',
         'aurelia-templating': 'au',
         'aurelia-templating-resources': 'au',
-      }
+      },
+      sourcemap: true
     },
     plugins: [
       typescript({
