@@ -17,5 +17,6 @@ describe('ce.integration.spec.ts', () => {
     });
     await waitForTimeout(50);
     expect(host.textContent).toBe('One');
+    dispose();
   });
 });
