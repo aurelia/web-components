@@ -9,7 +9,8 @@
     "declaration": false,
     "lib": ["es2015", "dom"],
     "jsx": "react",
-    "jsxFactory": "h"
+    "jsxFactory": "h",
+    "sourceMap": true
   },
   "include": [
     "src",
