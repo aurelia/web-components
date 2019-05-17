@@ -111,6 +111,22 @@ export function configure(aurelia) {
 
 > Note: This plugin requires that your browser have native support for the CustomElements v1 spec or that you have configured a v1 spec-compliant polyfill prior to calling registry methods.
 
+### Usage with webpack
+
+Web components require the es6/es2015 constructor call type to be used rather than es5 or earlier function prototype-based calls.
+In order to use this plugin with webpack, ensure the `dist` configuration of the `AureliaPlugin` is set to `es2015` or later in `webpack.config.js`
+```
+module.exports = ({...} = {}) => ({
+  ...
+  plugins: [
+    ....
+    new AureliaPlugin({
+      dist: 'es2015'
+    }),
+  ]
+});
+```
+
 ## Building The Code
 
 To build the code, follow these steps.
