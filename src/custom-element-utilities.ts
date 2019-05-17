@@ -50,9 +50,17 @@ export const createWebComponentClassFromBehavior = (
     _bindings: Binding[];
     /**@internal */
     au: { controller: Controller; };
+    /**@internal */
+    initialised: boolean;
 
     constructor() {
       super();
+      this.initialised = false;
+    }
+
+    private auInit(): void {
+      if (this.initialised) return;
+      this.initialised = true;
 
       const behaviorInstruction = BehaviorInstruction.element(this, behavior);
       const attributes = this.attributes;
@@ -91,6 +99,7 @@ export const createWebComponentClassFromBehavior = (
     }
 
     connectedCallback(): void {
+      this.auInit();
       let scope = { bindingContext: this, overrideContext: {} } as Scope;
       this.au.controller.bind(scope);
       this._bindings.forEach(x => x.bind(scope));
@@ -110,6 +119,7 @@ export const createWebComponentClassFromBehavior = (
     }
 
     attributeChangedCallback(attrName: string, oldValue: string, newValue: string): void {
+      this.auInit();
       const bindable = behavior.attributes[attrName];
       if (bindable !== undefined) {
         this.au.controller.viewModel[bindable.name] = newValue;

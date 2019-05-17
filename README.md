@@ -147,5 +147,6 @@ To run the unit tests, first ensure that you have followed the steps above in or
 ## How it works
 
 * Each of custom element will be backed by a view model.
-* For each view model class, a corresponding native custom element class will be created and defined, with the name derived from metadata and fallbacks to view model class name. If there is hyphen `-` in the name of a custom element view model, a prefix (`au-` by default) will be added to the name. This can be change in `CustomElementRegistry` instance.
+* For each view model class, a corresponding native custom element class will be created and defined, with the name derived from metadata and fallbacks to view model class name. If there is no hyphen `-` in the name of a custom element view model, a prefix (`au-` by default) will be added to the name. This can be change in `CustomElementRegistry` instance.
 * Slot: By default, content projection is done using Aurelia slot emulation. This is to keep it consistent with the rest of Aurelia ecosystem. To use native slot/shadow dom for content projection, decorate view model class with `@useShadowDOM`.
+* To comply with Custom element v1 specs, the element created by by Aurelia when calling `document.createElement` is empty until an attribute is modified or the element is added to a document. Specifically, the child elements are not created until the `connectedCallback` or `attributeChangedCallback` hooks are triggered.
