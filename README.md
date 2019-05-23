@@ -70,11 +70,12 @@ export function configure(aurelia) {
      .then(() => {
       const registry = aurelia.container.get(CustomElementRegistry);
 
-      // with useView path strategy
+      // with useView path strategy & globalResource
       @useView('path/to/view.html')
       class MyCarousel {
         // ...
       }
+      aurelia.use.globalResources(MyCarousel);
 
       // the following register 
       return Promise.all([
@@ -87,19 +88,7 @@ export function configure(aurelia) {
 
           // ...
         }),
-        // with inline view strategy, via getViewStrategy
-        registry.register(class MyPanel {
-          // ...
-          getViewStrategy() {
-            return new InlineViewStrategy(
-              `<template>
-                <h1>\${heading}</h1>
-                <slot></slot>
-              </template>`
-            )
-          }
-        }),
-        // with pre-defined view model class, using @useView
+        // with a pre-defined view-model class that has already been registered using aurelia.globalResources(MyCarousel)
         registry.register(MyCarousel)
       ]);
      })
