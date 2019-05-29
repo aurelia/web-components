@@ -234,3 +234,4 @@ var CustomElementRegistry = (function () {
 }());
 
 exports.CustomElementRegistry = CustomElementRegistry;
+//# sourceMappingURL=aurelia-web-components.js.map

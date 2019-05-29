@@ -231,3 +231,4 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
     Object.defineProperty(exports, '__esModule', { value: true });
 
 });
+//# sourceMappingURL=aurelia-web-components.js.map

@@ -248,3 +248,4 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         }
     };
 });
+//# sourceMappingURL=aurelia-web-components.js.map

@@ -196,3 +196,4 @@ class CustomElementRegistry {
 CustomElementRegistry.inject = [Container, ViewCompiler, ViewResources];
 
 export { CustomElementRegistry };
+//# sourceMappingURL=aurelia-web-components.js.map

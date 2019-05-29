@@ -230,3 +230,4 @@ var CustomElementRegistry = (function () {
 }());
 
 export { CustomElementRegistry };
+//# sourceMappingURL=aurelia-web-components.js.map
