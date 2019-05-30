@@ -70,11 +70,12 @@ export function configure(aurelia) {
      .then(() => {
       const registry = aurelia.container.get(CustomElementRegistry);
 
-      // with useView path strategy
+      // with useView path strategy & globalResource
       @useView('path/to/view.html')
       class MyCarousel {
         // ...
       }
+      aurelia.use.globalResources(MyCarousel);
 
       // the following register 
       return Promise.all([
@@ -87,19 +88,7 @@ export function configure(aurelia) {
 
           // ...
         }),
-        // with inline view strategy, via getViewStrategy
-        registry.register(class MyPanel {
-          // ...
-          getViewStrategy() {
-            return new InlineViewStrategy(
-              `<template>
-                <h1>\${heading}</h1>
-                <slot></slot>
-              </template>`
-            )
-          }
-        }),
-        // with pre-defined view model class, using @useView
+        // with a pre-defined view-model class that has already been registered using aurelia.globalResources(MyCarousel)
         registry.register(MyCarousel)
       ]);
      })
@@ -110,6 +99,22 @@ export function configure(aurelia) {
 ```
 
 > Note: This plugin requires that your browser have native support for the CustomElements v1 spec or that you have configured a v1 spec-compliant polyfill prior to calling registry methods.
+
+### Usage with webpack
+
+Web components require the es6/es2015 constructor call type to be used rather than es5 or earlier function prototype-based calls.
+In order to use this plugin with webpack, ensure the `dist` configuration of the `AureliaPlugin` is set to `es2015` or later in `webpack.config.js`
+```
+module.exports = ({...} = {}) => ({
+  ...
+  plugins: [
+    ....
+    new AureliaPlugin({
+      dist: 'es2015'
+    }),
+  ]
+});
+```
 
 ## Building The Code
 
@@ -142,5 +147,6 @@ To run the unit tests, first ensure that you have followed the steps above in or
 ## How it works
 
 * Each of custom element will be backed by a view model.
-* For each view model class, a corresponding native custom element class will be created and defined, with the name derived from metadata and fallbacks to view model class name. If there is hyphen `-` in the name of a custom element view model, a prefix (`au-` by default) will be added to the name. This can be change in `CustomElementRegistry` instance.
+* For each view model class, a corresponding native custom element class will be created and defined, with the name derived from metadata and fallbacks to view model class name. If there is no hyphen `-` in the name of a custom element view model, a prefix (`au-` by default) will be added to the name. This can be change in `CustomElementRegistry` instance.
 * Slot: By default, content projection is done using Aurelia slot emulation. This is to keep it consistent with the rest of Aurelia ecosystem. To use native slot/shadow dom for content projection, decorate view model class with `@useShadowDOM`.
+* To comply with Custom element v1 specs, the element created by by Aurelia when calling `document.createElement` is empty until an attribute is modified or the element is added to a document. Specifically, the child elements are not created until the `connectedCallback` or `attributeChangedCallback` hooks are triggered.
