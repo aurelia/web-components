@@ -58,7 +58,7 @@ export const createWebComponentClassFromBehavior = (
       this.initialized = false;
     }
 
-    private auInit(): void {
+    auInit(): void {
       if (this.initialized) {
         return;
       }
