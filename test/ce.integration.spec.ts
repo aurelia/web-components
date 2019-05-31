@@ -34,7 +34,7 @@ describe('ce.integration.spec.ts', () => {
     registry.register(CustomElementTwo);
     await waitForTimeout(50);
 
-    const customComponent = document.createElement("custom-element-two");
+    const customComponent = document.createElement('custom-element-two');
     host.appendChild(customComponent);
     expect(customComponent.textContent).toBe('One');
     dispose();
@@ -44,7 +44,7 @@ describe('ce.integration.spec.ts', () => {
     class CustomElementThree {
       static $view = '<template>One</template>';
       // Bindable property must exist in order for the attributeChangedCallback to be executed
-      @bindable testing
+      @bindable testing;
     }
     const { registry, dispose } = await bootstrapAurelia({
       root: class RootViewModel {
@@ -55,8 +55,8 @@ describe('ce.integration.spec.ts', () => {
     registry.register(CustomElementThree);
     await waitForTimeout(50);
 
-    const customComponent = document.createElement("custom-element-three");
-    customComponent.setAttribute("testing", "xx-ignored-xx");
+    const customComponent = document.createElement('custom-element-three');
+    customComponent.setAttribute('testing', 'xx-ignored-xx');
     expect(customComponent.textContent).toBe('One');
     dispose();
   });
@@ -65,7 +65,7 @@ describe('ce.integration.spec.ts', () => {
     class CustomElementFour {
       static $view = '<template>${testing}</template>';
       // Bindable property must exist in order for the attributeChangedCallback to be executed
-      @bindable testing
+      @bindable testing;
     }
     const { host, registry, dispose } = await bootstrapAurelia({
       root: class RootViewModel {
@@ -76,9 +76,9 @@ describe('ce.integration.spec.ts', () => {
     registry.register(CustomElementFour);
     await waitForTimeout(50);
 
-    const customComponent = document.createElement("custom-element-four");
+    const customComponent = document.createElement('custom-element-four');
     expect(customComponent.textContent).toBe('');
-    customComponent.setAttribute("testing", "One");
+    customComponent.setAttribute('testing', 'One');
     // TODO this value is unexpected... I can't explain why the text changes here...
     expect(customComponent.textContent).toBe(' ');
 
@@ -93,7 +93,7 @@ describe('ce.integration.spec.ts', () => {
     class CustomElementFive {
       static $view = '<template>${testing}</template>';
       // Bindable property must exist in order for the attributeChangedCallback to be executed
-      @bindable testing
+      @bindable testing;
     }
     const { host, registry, dispose } = await bootstrapAurelia({
       root: class RootViewModel {
@@ -104,11 +104,11 @@ describe('ce.integration.spec.ts', () => {
     registry.register(CustomElementFive);
     await waitForTimeout(50);
 
-    const customComponent = document.createElement("custom-element-five");
+    const customComponent = document.createElement('custom-element-five');
     host.appendChild(customComponent);
     await waitForTimeout(50);
 
-    customComponent.setAttribute("testing", "One");
+    customComponent.setAttribute('testing', 'One');
     expect(customComponent.textContent).not.toBe('One');
 
     await waitForTimeout(50);

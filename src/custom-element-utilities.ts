@@ -51,16 +51,19 @@ export const createWebComponentClassFromBehavior = (
     /**@internal */
     au: { controller: Controller; };
     /**@internal */
-    initialised: boolean;
+    initialized: boolean;
 
     constructor() {
       super();
-      this.initialised = false;
+      this.initialized = false;
     }
 
     private auInit(): void {
-      if (this.initialised) return;
-      this.initialised = true;
+      if (this.initialized) {
+        return;
+      }
+
+      this.initialized = true;
 
       const behaviorInstruction = BehaviorInstruction.element(this, behavior);
       const attributes = this.attributes;
