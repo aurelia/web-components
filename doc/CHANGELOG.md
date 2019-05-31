@@ -1,3 +1,7 @@
+## 1.0.0-beta.3
+
+* fix(all): delay creation of child elements to follow w3c guidelines
+
 ## 1.0.0-beta.2
 
 * Build improvements

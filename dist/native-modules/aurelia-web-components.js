@@ -54,23 +54,31 @@ var createWebComponentClassFromBehavior = function (container, behavior, viewRes
         __extends(class_1, _super);
         function class_1() {
             var _this = _super.call(this) || this;
-            var behaviorInstruction = BehaviorInstruction.element(_this, behavior);
-            var attributes = _this.attributes;
-            var children = _this._children = [];
-            var bindings = _this._bindings = [];
-            behavior.processAttributes(compiler, viewResources, _this, attributes, behaviorInstruction);
+            _this.initialized = false;
+            return _this;
+        }
+        class_1.prototype.auInit = function () {
+            if (this.initialized) {
+                return;
+            }
+            this.initialized = true;
+            var behaviorInstruction = BehaviorInstruction.element(this, behavior);
+            var attributes = this.attributes;
+            var children = this._children = [];
+            var bindings = this._bindings = [];
+            behavior.processAttributes(compiler, viewResources, this, attributes, behaviorInstruction);
             for (var i = 0, ii = attributes.length; i < ii; ++i) {
                 var attr = attributes[i];
                 behaviorInstruction.attributes[attr.name] = attr.value;
             }
-            behavior.compile(compiler, viewResources, _this, behaviorInstruction, _this.parentNode);
+            behavior.compile(compiler, viewResources, this, behaviorInstruction, this.parentNode);
             var targetInstruction = TargetInstruction.normal(0, 0, [behavior.target], [behaviorInstruction], emptyArray, behaviorInstruction);
-            var childContainer = createElementContainer(container, _this, targetInstruction, children, behaviorInstruction.partReplacements, viewResources);
-            var controller = behavior.create(childContainer, behaviorInstruction, _this, bindings);
+            var childContainer = createElementContainer(container, this, targetInstruction, children, behaviorInstruction.partReplacements, viewResources);
+            var controller = behavior.create(childContainer, behaviorInstruction, this, bindings);
             controller.created(null);
-            return _this;
-        }
+        };
         class_1.prototype.connectedCallback = function () {
+            this.auInit();
             var scope = { bindingContext: this, overrideContext: {} };
             this.au.controller.bind(scope);
             this._bindings.forEach(function (x) { return x.bind(scope); });
@@ -86,6 +94,7 @@ var createWebComponentClassFromBehavior = function (container, behavior, viewRes
             this._children.forEach(function (x) { return x.unbind(); });
         };
         class_1.prototype.attributeChangedCallback = function (attrName, oldValue, newValue) {
+            this.auInit();
             var bindable = behavior.attributes[attrName];
             if (bindable !== undefined) {
                 this.au.controller.viewModel[bindable.name] = newValue;

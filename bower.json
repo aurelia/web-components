@@ -1,6 +1,6 @@
 {
   "name": "aurelia-web-components",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "A plugin capable of transforming Aurelia components into standards-compliant Web Components.",
   "keywords": [
     "aurelia",

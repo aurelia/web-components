@@ -25,6 +25,13 @@
       const CustomElementClass = class extends HTMLElement {
           constructor() {
               super();
+              this.initialized = false;
+          }
+          auInit() {
+              if (this.initialized) {
+                  return;
+              }
+              this.initialized = true;
               const behaviorInstruction = aureliaTemplating.BehaviorInstruction.element(this, behavior);
               const attributes = this.attributes;
               const children = this._children = [];
@@ -41,6 +48,7 @@
               controller.created(null);
           }
           connectedCallback() {
+              this.auInit();
               let scope = { bindingContext: this, overrideContext: {} };
               this.au.controller.bind(scope);
               this._bindings.forEach(x => x.bind(scope));
@@ -56,6 +64,7 @@
               this._children.forEach(x => x.unbind());
           }
           attributeChangedCallback(attrName, oldValue, newValue) {
+              this.auInit();
               const bindable = behavior.attributes[attrName];
               if (bindable !== undefined) {
                   this.au.controller.viewModel[bindable.name] = newValue;
