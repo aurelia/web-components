@@ -41,8 +41,17 @@ export const createWebComponentClassFromBehavior = (
   viewResources: ViewResources,
   compiler: ViewCompiler
 ) => {
+  const CustomElementViewModelClass = behavior.target;
+  const extensionBase = CustomElementViewModelClass.extends;
+  let BaseClass = HTMLElement;
 
-  const CustomElementClass = class extends HTMLElement {
+  if (extensionBase && typeof extensionBase === 'string') {
+    BaseClass = document.createElement(extensionBase).constructor as { new(): any };
+  }
+
+  const CustomElementClass = class extends BaseClass {
+
+    static $extends: string;
 
     /**@internal */
     _children: View[];
@@ -130,9 +139,12 @@ export const createWebComponentClassFromBehavior = (
     }
   };
 
-  const CustomElementViewModelClass = behavior.target;
   const proto = CustomElementClass.prototype;
   const observedAttributes: string[] = [];
+
+  if (typeof extensionBase === 'string' && extensionBase) {
+    CustomElementClass.$extends = extensionBase;
+  }
 
   behavior.properties.forEach(bindableProperty => {
 
