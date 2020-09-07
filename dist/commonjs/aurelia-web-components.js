@@ -186,6 +186,7 @@ var createElementContainer = function (parent, element, instruction, children, p
 var CustomElementRegistry = (function () {
     function CustomElementRegistry(container, viewCompiler, viewResources) {
         this.fallbackPrefix = 'au-';
+        this.mandatoryPrefix = false;
         this._lookup = Object.create(null);
         this.container = container;
         this.viewCompiler = viewCompiler;
@@ -209,7 +210,9 @@ var CustomElementRegistry = (function () {
             behavior: behavior,
             classDefinition: classDefinition
         };
-        tagName = this.fallbackPrefix + tagName;
+        if (this.mandatoryPrefix || tagName.indexOf('-') === -1) {
+            tagName = this.fallbackPrefix + tagName;
+        }
         customElements.define(tagName, classDefinition);
         return info;
     };

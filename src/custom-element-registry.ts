@@ -14,6 +14,7 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
    * Custom element name must have hyphen. With custom elements that do not have, prefix with `au-`
    */
   fallbackPrefix: string;
+  mandatoryPrefix: boolean;
 
   /**@internal */
   private _lookup: Record<string, ICustomElementInfo>;
@@ -29,6 +30,7 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
 
   constructor(container: Container, viewCompiler: ViewCompiler, viewResources: ViewResources) {
     this.fallbackPrefix = 'au-';
+    this.mandatoryPrefix = false;
     this._lookup = Object.create(null);
     this.container = container;
     this.viewCompiler = viewCompiler;
@@ -67,9 +69,9 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
       classDefinition: classDefinition
     };
 
-    //make fallbackPrefix obligatory //if (tagName.indexOf('-') === -1) {
+    if (this.mandatoryPrefix || tagName.indexOf('-') === -1) {
       tagName = this.fallbackPrefix + tagName;
-    //}
+    }
 
     customElements.define(tagName, classDefinition);
 

@@ -31,6 +31,8 @@ export function configure(aurelia) {
 
       //The following line takes all global resource custom elements and registers them as web components.
       //Once the element is registered, in-page elements will begin rendering.
+      //registry.fallbackPrefix = 'au-'; //default fallback prefix for custom elements - 
+      //registry.mandatoryPrefix = false; //whether all custom elements will be prefixed, by default only those wihtout hyphen ('-')
       registry.useGlobalElements();
     });
  }

@@ -151,6 +151,7 @@
   class CustomElementRegistry {
       constructor(container, viewCompiler, viewResources) {
           this.fallbackPrefix = 'au-';
+          this.mandatoryPrefix = false;
           this._lookup = Object.create(null);
           this.container = container;
           this.viewCompiler = viewCompiler;
@@ -173,7 +174,9 @@
               behavior: behavior,
               classDefinition: classDefinition
           };
-          tagName = this.fallbackPrefix + tagName;
+          if (this.mandatoryPrefix || tagName.indexOf('-') === -1) {
+              tagName = this.fallbackPrefix + tagName;
+          }
           customElements.define(tagName, classDefinition);
           return info;
       }
