@@ -221,9 +221,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
                         behavior: behavior,
                         classDefinition: classDefinition
                     };
-                    if (tagName.indexOf('-') === -1) {
-                        tagName = this.fallbackPrefix + tagName;
-                    }
+                    tagName = this.fallbackPrefix + tagName;
                     customElements.define(tagName, classDefinition);
                     return info;
                 };

@@ -67,9 +67,9 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
       classDefinition: classDefinition
     };
 
-    if (tagName.indexOf('-') === -1) {
+    //make fallbackPrefix obligatory //if (tagName.indexOf('-') === -1) {
       tagName = this.fallbackPrefix + tagName;
-    }
+    //}
 
     customElements.define(tagName, classDefinition);
 
