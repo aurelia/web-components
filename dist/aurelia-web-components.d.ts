@@ -18,7 +18,6 @@ export declare class CustomElementRegistry implements ICustomHtmlRegistry {
 	 * Custom element name must have hyphen. With custom elements that do not have, prefix with `au-`
 	 */
 	fallbackPrefix: string;
-	mandatoryPrefix: boolean;
 	constructor(container: Container, viewCompiler: ViewCompiler, viewResources: ViewResources);
 	/**
 	 * Use all global elements from current view resources and define them as native custom element
