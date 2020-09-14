@@ -69,7 +69,7 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
       classDefinition: classDefinition
     };
 
-    if (this.forcePrefix || tagName.indexOf('-') === -1) {
+    if ((this.forcePrefix && !tagName.startsWith(this.fallbackPrefix) )|| tagName.indexOf('-') === -1)  {
       tagName = this.fallbackPrefix + tagName;
     }
 

@@ -116,7 +116,7 @@ describe('ce.integration.spec.ts', () => {
     dispose();
   });
 
-  it('should initialise web component with mandatory prefix when attached to document', async () => {
+  it('should initialise web component with forced prefix when attached to document', async () => {
     class CustomElementSix {
       static $view = '<template>Six</template>';
     }
@@ -126,7 +126,7 @@ describe('ce.integration.spec.ts', () => {
       },
       resources: [CustomElementSix]
     });
-    registry.mandatoryPrefix = true;
+    registry.forcePrefix = true;
     registry.register(CustomElementSix);
     await waitForTimeout(50);
 
@@ -136,6 +136,29 @@ describe('ce.integration.spec.ts', () => {
     const customComponent = document.createElement('au-custom-element-six');
     host.appendChild(customComponent);
     expect(customComponent.textContent).toBe('Six');
+    dispose();
+  });
+  it('should initialise web component with forced prefix, but prefix should not be doubled when attached to document', async () => {
+    class CustomElementSeven {
+      static $view = '<template>Seven</template>';
+    }
+    const { host, registry, dispose } = await bootstrapAurelia({
+      root: class RootViewModel {
+        static $view = '<template></template>';
+      },
+      resources: [CustomElementSeven]
+    });
+    registry.forcePrefix = true;
+    registry.fallbackPrefix = 'custom-'
+    registry.register(CustomElementSeven);
+    await waitForTimeout(50);
+
+    const customComponent0 = document.createElement('custom-element-seven');
+    host.appendChild(customComponent0);
+    expect(customComponent0.textContent).toBe('Seven');
+    const customComponent = document.createElement('custom-custom-element-seven');
+    host.appendChild(customComponent);
+    expect(customComponent.textContent).toBe('');
     dispose();
   });
 });
