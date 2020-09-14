@@ -115,4 +115,27 @@ describe('ce.integration.spec.ts', () => {
     expect(customComponent.textContent).toBe('One');
     dispose();
   });
+
+  it('should initialise web component with mandatory prefix when attached to document', async () => {
+    class CustomElementSix {
+      static $view = '<template>Six</template>';
+    }
+    const { host, registry, dispose } = await bootstrapAurelia({
+      root: class RootViewModel {
+        static $view = '<template></template>';
+      },
+      resources: [CustomElementSix]
+    });
+    registry.mandatoryPrefix = true;
+    registry.register(CustomElementSix);
+    await waitForTimeout(50);
+
+    const customComponent0 = document.createElement('custom-element-six');
+    host.appendChild(customComponent0);
+    expect(customComponent0.textContent).toBe('');
+    const customComponent = document.createElement('au-custom-element-six');
+    host.appendChild(customComponent);
+    expect(customComponent.textContent).toBe('Six');
+    dispose();
+  });
 });
