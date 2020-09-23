@@ -30,6 +30,9 @@ export function configure(aurelia) {
       const registry = aurelia.container.get(CustomElementRegistry);
 
       //The following line takes all global resource custom elements and registers them as web components.
+      //default fallback prefix for custom elements is `au-`, set different
+      //registry.fallbackPrefix = 'au-';
+      //registry.forcePrefix = false; //whether all custom elements will be prefixed, false means that only those without hyphen ('-')
       //Once the element is registered, in-page elements will begin rendering.
       registry.useGlobalElements();
     });
@@ -56,7 +59,7 @@ export function configure(aurelia) {
      .then(() => {
       const registry = aurelia.container.get(CustomElementRegistry);
 
-      // the following register 
+      // the following register
       return registry.register(class MyButton {
 
         static $view = `<template>
@@ -77,7 +80,7 @@ export function configure(aurelia) {
       }
       aurelia.use.globalResources(MyCarousel);
 
-      // the following register 
+      // the following register
       return Promise.all([
         // with static view strategy
         registry.register(class MyButton {
@@ -147,6 +150,6 @@ To run the unit tests, first ensure that you have followed the steps above in or
 ## How it works
 
 * Each of custom element will be backed by a view model.
-* For each view model class, a corresponding native custom element class will be created and defined, with the name derived from metadata and fallbacks to view model class name. If there is no hyphen `-` in the name of a custom element view model, a prefix (`au-` by default) will be added to the name. This can be change in `CustomElementRegistry` instance.
+* For each view model class, a corresponding native custom element class will be created and defined, with the name derived from metadata and fallbacks to view model class name. If there is no hyphen `-` in the name of a custom element view model, a prefix (`au-` by default) will be added to the name. This can be changed in `CustomElementRegistry` instance.
 * Slot: By default, content projection is done using Aurelia slot emulation. This is to keep it consistent with the rest of Aurelia ecosystem. To use native slot/shadow dom for content projection, decorate view model class with `@useShadowDOM`.
 * To comply with Custom element v1 specs, the element created by by Aurelia when calling `document.createElement` is empty until an attribute is modified or the element is added to a document. Specifically, the child elements are not created until the `connectedCallback` or `attributeChangedCallback` hooks are triggered.
