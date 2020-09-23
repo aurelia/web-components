@@ -58,7 +58,7 @@ declare module 'aurelia-templating' {
     ): void;
     properties: BindableProperty[];
     attributes: Record<string, BindableProperty>;
-    target: Function;
+    target: Function & { extends?: string };
 
     _ensurePropertiesDefined(instance: object, lookup: Record<string, any>): void;
   }

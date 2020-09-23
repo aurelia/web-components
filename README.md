@@ -103,11 +103,46 @@ export function configure(aurelia) {
 
 > Note: This plugin requires that your browser have native support for the CustomElements v1 spec or that you have configured a v1 spec-compliant polyfill prior to calling registry methods.
 
-### Usage with webpack
+### Extending Built-In Elements
+
+One nice feature of web-components custom elements is that you can extend built-in html elements, such as: button, input etc... and enable the following usage:
+
+```html
+<button is=my-custom-button>...</button>
+```
+
+To extends built-in html element, add `extends` to your view model class, with the value of built-in element that you would like to extend, an example:
+
+```js
+  class MyButton {
+
+    static extends = 'button';
+    static $view = '<template>my button ${icon}</template>';
+
+    @bindable icon;
+  }
+
+  await registry.register(MyButton2);
+```
+And then, you can do
+
+```js
+element.innerHTML = '<button is=my-button icon=♥></button>'
+```
+
+It will render something like this:
+```html
+<button is=my-button icon=♥>my button ♥</button>
+```
+
+`button` is not the only thing you can extend, imagine textarea, paragraph, div and more.
+
+### Usage With Webpack
 
 Web components require the es6/es2015 constructor call type to be used rather than es5 or earlier function prototype-based calls.
 In order to use this plugin with webpack, ensure the `dist` configuration of the `AureliaPlugin` is set to `es2015` or later in `webpack.config.js`
-```
+
+```js
 module.exports = ({...} = {}) => ({
   ...
   plugins: [

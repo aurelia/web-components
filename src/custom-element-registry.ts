@@ -3,7 +3,7 @@ import { HtmlBehaviorResource, ViewCompiler, ViewResources, ViewFactory } from '
 import { createWebComponentClassFromBehavior } from './custom-element-utilities';
 import './interface';
 import { ICustomElementInfo, ICustomHtmlRegistry } from './interface';
-import { tagNameOf } from './utilities';
+import { tagNameOf, hyphenate } from './utilities';
 import { metadata } from 'aurelia-metadata';
 
 export class CustomElementRegistry implements ICustomHtmlRegistry {
@@ -73,7 +73,12 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
       tagName = this.fallbackPrefix + tagName;
     }
 
-    customElements.define(tagName, classDefinition);
+    const args: [string, Function, ElementDefinitionOptions?] = [tagName, classDefinition];
+    const extensionBase = classDefinition.$extends;
+    if (extensionBase) {
+      args.push({ extends: extensionBase });
+    }
+    customElements.define(...args);
 
     return info;
   }
@@ -83,13 +88,21 @@ export class CustomElementRegistry implements ICustomHtmlRegistry {
     // validating metadata
     if (htmlBehaviorResource) {
       ViewResources.convention(Type, htmlBehaviorResource);
-    } else {
+    }
+    else {
       htmlBehaviorResource = ViewResources.convention(Type) as HtmlBehaviorResource;
     }
-    if (!(htmlBehaviorResource instanceof HtmlBehaviorResource) || htmlBehaviorResource.elementName === null) {
+
+    // after running static convetion and there's nothing applied
+    // check if it's a valid html behavior resource
+    if (!(htmlBehaviorResource instanceof HtmlBehaviorResource) || htmlBehaviorResource.attributeName !== null) {
       throw new Error(`class ${Type.name} is already associated with a different type of resource. Cannot register as a custom element.`);
     }
+    else {
+      htmlBehaviorResource.elementName = htmlBehaviorResource.elementName || hyphenate(Type.name);
+    }
 
+    htmlBehaviorResource.target = Type;
     const customElementInfo = this.registerBehavior(htmlBehaviorResource, Type['is']);
     return htmlBehaviorResource
       .load(this.container, Type)
